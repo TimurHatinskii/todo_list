@@ -35,6 +35,7 @@ const tasks = [
     return acc;
   }, {});
 
+  console.log(objOfTasks);
   const themes = {
     default: {
       "--base-text-color": "#212529",
@@ -48,6 +49,12 @@ const tasks = [
       "--danger-btn-text-color": "#fff",
       "--danger-btn-hover-bg": "#bd2130",
       "--danger-btn-border-color": "#dc3545",
+
+      "--notdanger-btn-bg": "#35dc59",
+      "--notdanger-btn-text-color": "#fff",
+      "--notdanger-btn-hover-bg": "#21bd36",
+      "--notdanger-btn-border-color": "#35dc59",
+
       "--input-border-color": "#ced4da",
       "--input-bg-color": "#fff",
       "--input-text-color": "#495057",
@@ -56,6 +63,7 @@ const tasks = [
       "--input-focus-border-color": "#80bdff",
       "--input-focus-box-shadow": "0 0 0 0.2rem rgba(0, 123, 255, 0.25)",
     },
+
     dark: {
       "--base-text-color": "#212529",
       "--header-bg": "#343a40",
@@ -70,6 +78,12 @@ const tasks = [
       "--danger-btn-text-color": "#fff",
       "--danger-btn-hover-bg": "#88222c",
       "--danger-btn-border-color": "#88222c",
+
+      "--notdanger-btn-bg": "#1c742f",
+      "--notdanger-btn-text-color": "#fff",
+      "--notdanger-btn-hover-bg": "#12501f",
+      "--notdanger-btn-border-color": "#1c742f",
+
       "--input-border-color": "#ced4da",
       "--input-bg-color": "#fff",
       "--input-text-color": "#495057",
@@ -78,6 +92,7 @@ const tasks = [
       "--input-focus-border-color": "#78818a",
       "--input-focus-box-shadow": "0 0 0 0.2rem rgba(141, 143, 146, 0.25)",
     },
+
     light: {
       "--base-text-color": "#212529",
       "--header-bg": "#fff",
@@ -92,6 +107,12 @@ const tasks = [
       "--danger-btn-text-color": "#212529",
       "--danger-btn-hover-bg": "#ef808a",
       "--danger-btn-border-color": "#e2818a",
+
+      "--notdanger-btn-bg": "#a4dcb0",
+      "--notdanger-btn-text-color": "#212529",
+      "--notdanger-btn-hover-bg": "#719a77",
+      "--notdanger-btn-border-color": "#658f6e",
+
       "--input-border-color": "#ced4da",
       "--input-bg-color": "#fff",
       "--input-text-color": "#495057",
@@ -112,12 +133,28 @@ const tasks = [
   const inputBody = form.elements["body"];
   const themeSelect = document.getElementById("themeSelect");
 
+  //* Ищем на нашей разметке div который содержит в себе сообщение "Список дел пуст!"
+  const tasksListEmpty = document.querySelector(".tasks-list-empty");
+
   // Events
   setTheme(lastSelectedTheme);
   renderAllTasks(objOfTasks);
   form.addEventListener("submit", onFormSubmitHandler);
   listContainer.addEventListener("click", onDeletehandler);
   themeSelect.addEventListener("change", onThemeSelectHandler);
+
+  //* Вызов функции проверки списка на пустоту, выдает сообщение "Список дел пуст!"
+  msgListEmpty(objOfTasks);
+
+  //* Функции проверки списка на пустоту, если пустой, то отобразить сообщение "Список дел пуст!"
+  function msgListEmpty() {
+    if (listContainer.children.length == 0) {
+      tasksListEmpty.classList.remove("none");
+    } else {
+      tasksListEmpty.classList.add("none");
+      return;
+    }
+  }
 
   function renderAllTasks(tasksList) {
     if (!tasksList) {
@@ -177,6 +214,7 @@ const tasks = [
     const listItem = listItemTemplate(task);
     listContainer.insertAdjacentElement("afterbegin", listItem);
     form.reset();
+    msgListEmpty(objOfTasks);
   }
 
   function createNewTask(title, body) {
@@ -203,6 +241,7 @@ const tasks = [
   function deleteTaskFromHtml(confirmed, el) {
     if (!confirmed) return;
     el.remove();
+    msgListEmpty(objOfTasks);
   }
 
   function onDeletehandler({ target }) {

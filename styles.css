@@ -10,6 +10,15 @@
   --danger-btn-text-color: #fff;
   --danger-btn-hover-bg: #bd2130;
   --danger-btn-border-color: #dc3545;
+
+  /* * Кнопка завершения задачи */
+  /* *------------------------- */
+  --notdanger-btn-bg: #35dc59;
+  --notdanger-btn-text-color: #fff;
+  --notdanger-btn-hover-bg: #21bd36;
+  --notdanger-btn-border-color: #35dc59;
+  /* *------------------------- */
+
   --input-border-color: #ced4da;
   --input-bg-color: #fff;
   --input-text-color: #495057;
@@ -37,9 +46,11 @@ body {
   background-color: var(--default-btn-bg);
   border-color: var(--default-btn-border-color);
 }
+
 .btn-primary:not(:disabled):not(.disabled):active:focus {
   box-shadow: var(--default-btn-focus-box-shadow);
 }
+
 .btn.btn-primary:hover {
   color: var(--default-btn-text-color);
   background-color: var(--default-btn-hover-bg);
@@ -70,4 +81,15 @@ body {
   background-color: var(--input-focus-bg-color);
   border-color: var(--input-focus-border-color);
   box-shadow: var(--input-focus-box-shadow);
+}
+
+.tasks-list-empty {
+  text-align: center !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  color: #dc3545;
+}
+
+.none {
+  display: none !important;
 }
