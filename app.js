@@ -5,27 +5,30 @@ const tasks = [
     _id: "5d2ca9e2e03d40b326596aa7",
     completed: true,
     body: "Occaecat non ea quis occaecat ad culpa amet deserunt incididunt elit fugiat pariatur. Exercitation commodo culpa in veniam proident laboris in. Excepteur cupidatat eiusmod dolor consectetur exercitation nulla aliqua veniam fugiat irure mollit. Eu dolor dolor excepteur pariatur aute do do ut pariatur consequat reprehenderit deserunt.\r\n",
-    title: "Eu ea incididunt sunt consectetur fugiat non.",
+    title: "1 Eu ea incididunt sunt consectetur fugiat non.",
   },
+
   {
     _id: "5d2ca9e29c8a94095c1288e0",
     completed: false,
     body: "Aliquip cupidatat ex adipisicing veniam do tempor. Lorem nulla adipisicing et esse cupidatat qui deserunt in fugiat duis est qui. Est adipisicing ipsum qui cupidatat exercitation. Cupidatat aliqua deserunt id deserunt excepteur nostrud culpa eu voluptate excepteur. Cillum officia proident anim aliquip. Dolore veniam qui reprehenderit voluptate non id anim.\r\n",
     title:
-      "Deserunt laborum id consectetur pariatur veniam occaecat occaecat tempor voluptate pariatur nulla reprehenderit ipsum.",
+      "2 Deserunt laborum id consectetur pariatur veniam occaecat occaecat tempor voluptate pariatur nulla reprehenderit ipsum.",
   },
+
   {
     _id: "5d2ca9e2e03d40b3232496aa7",
     completed: true,
     body: "Occaecat non ea quis occaecat ad culpa amet deserunt incididunt elit fugiat pariatur. Exercitation commodo culpa in veniam proident laboris in. Excepteur cupidatat eiusmod dolor consectetur exercitation nulla aliqua veniam fugiat irure mollit. Eu dolor dolor excepteur pariatur aute do do ut pariatur consequat reprehenderit deserunt.\r\n",
-    title: "Eu ea incididunt sunt consectetur fugiat non.",
+    title: "3 Eu ea incididunt sunt consectetur fugiat non.",
   },
+
   {
     _id: "5d2ca9e29c8a94095564788e0",
     completed: false,
     body: "Aliquip cupidatat ex adipisicing veniam do tempor. Lorem nulla adipisicing et esse cupidatat qui deserunt in fugiat duis est qui. Est adipisicing ipsum qui cupidatat exercitation. Cupidatat aliqua deserunt id deserunt excepteur nostrud culpa eu voluptate excepteur. Cillum officia proident anim aliquip. Dolore veniam qui reprehenderit voluptate non id anim.\r\n",
     title:
-      "Deserunt laborum id consectetur pariatur veniam occaecat occaecat tempor voluptate pariatur nulla reprehenderit ipsum.",
+      "4 Deserunt laborum id consectetur pariatur veniam occaecat occaecat tempor voluptate pariatur nulla reprehenderit ipsum.",
   },
 ];
 
@@ -35,7 +38,6 @@ const tasks = [
     return acc;
   }, {});
 
-  console.log(objOfTasks);
   const themes = {
     default: {
       "--base-text-color": "#212529",
@@ -122,6 +124,7 @@ const tasks = [
       "--input-focus-box-shadow": "0 0 0 0.2rem rgba(141, 143, 146, 0.25)",
     },
   };
+
   let lastSelectedTheme = localStorage.getItem("app_theme") || "default";
 
   // Elemnts UI
@@ -141,12 +144,17 @@ const tasks = [
   renderAllTasks(objOfTasks);
   form.addEventListener("submit", onFormSubmitHandler);
   listContainer.addEventListener("click", onDeletehandler);
+
+  //* Обработчик событий кнопки выполнения задачи
+  listContainer.addEventListener("click", onCompletedhandler);
+
   themeSelect.addEventListener("change", onThemeSelectHandler);
 
   //* Вызов функции проверки списка на пустоту, выдает сообщение "Список дел пуст!"
   msgListEmpty(objOfTasks);
 
   //* Функции проверки списка на пустоту, если пустой, то отобразить сообщение "Список дел пуст!"
+  //* ------------------------ */
   function msgListEmpty() {
     if (listContainer.children.length == 0) {
       tasksListEmpty.classList.remove("none");
@@ -155,6 +163,7 @@ const tasks = [
       return;
     }
   }
+  //* ------------------------ */
 
   function renderAllTasks(tasksList) {
     if (!tasksList) {
@@ -163,6 +172,7 @@ const tasks = [
     }
 
     const fragment = document.createDocumentFragment();
+
     Object.values(tasksList).forEach((task) => {
       const li = listItemTemplate(task);
       fragment.appendChild(li);
@@ -170,7 +180,7 @@ const tasks = [
     listContainer.appendChild(fragment);
   }
 
-  function listItemTemplate({ _id, title, body } = {}) {
+  function listItemTemplate({ _id, title, body, completed } = {}) {
     const li = document.createElement("li");
     li.classList.add(
       "list-group-item",
@@ -181,13 +191,37 @@ const tasks = [
     );
     li.setAttribute("data-task-id", _id);
 
+    //* Добавляем цвет к изначально выполненым задачам
+    //* ------------------------ */
+    if (completed) {
+      li.classList.add("bg-success");
+    } else {
+      li.classList.add("bg-white");
+    }
+    //* ------------------------ */
+
     const span = document.createElement("span");
     span.textContent = title;
     span.style.fontWeight = "bold";
 
+    // * Кнопка удаления задачи
+    //* ------------------------ */
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete task";
     deleteBtn.classList.add("btn", "btn-danger", "ml-auto", "delete-btn");
+    //* ------------------------ */
+
+    // * Кнопка завершения задачи
+    //* ------------------------ */
+    const completedBtn = document.createElement("button");
+    completedBtn.textContent = "Completed task";
+    completedBtn.classList.add(
+      "btn",
+      "btn-success",
+      "ml-auto",
+      "completed-btn"
+    );
+    //* ------------------------ */
 
     const article = document.createElement("p");
     article.textContent = body;
@@ -196,9 +230,71 @@ const tasks = [
     li.appendChild(span);
     li.appendChild(deleteBtn);
     li.appendChild(article);
-
+    li.appendChild(completedBtn);
     return li;
   }
+
+  //* Добавляем на страницу копки "Показать все задачи" и "Показать незавершенные задачи"
+  //* ------------------------ */
+  const divBtnShow = document.createElement("div");
+  divBtnShow.classList.add("d-flex", "justify-content-center");
+
+  const showAllTasksBtn = document.createElement("button");
+  showAllTasksBtn.textContent = "Показать все задачи";
+  showAllTasksBtn.classList.add(
+    "btn",
+    "btn-info",
+    "ml-4",
+    "mt-3",
+    "showAllTasksView"
+  );
+
+  const showUnfinishedTasksBtn = document.createElement("button");
+  showUnfinishedTasksBtn.textContent = "Показать незавершенные задачи";
+  showUnfinishedTasksBtn.classList.add(
+    "btn",
+    "btn-info",
+    "ml-4",
+    "mt-3",
+    "showUnfinishedTasksView"
+  );
+
+  divBtnShow.appendChild(showAllTasksBtn);
+  divBtnShow.appendChild(showUnfinishedTasksBtn);
+
+  let formSectionCard = document.querySelector(".col");
+  formSectionCard.appendChild(divBtnShow);
+
+  showAllTasksBtn.addEventListener("click", completeAllTasks);
+  showUnfinishedTasksBtn.addEventListener("click", unfinishedTasks);
+
+  //* Кнопка "Показать все задачи" *//
+  //* ------------------------ */
+  let showSort = false;
+
+  function completeAllTasks(el) {
+    let showTasks = [...listContainer.children].filter(
+      (item) => objOfTasks[item.dataset.taskId].completed
+    );
+    showTasks.forEach((item) => {
+      item.classList.remove("none");
+    });
+    showSort = false;
+  }
+  //* ------------------------ */
+
+  //* Кнопка "Показать незавершенные задачи" *//
+  //* ------------------------ */
+  function unfinishedTasks(el) {
+    let showTasks = [...listContainer.children].filter(
+      (item) => objOfTasks[item.dataset.taskId].completed
+    );
+    showTasks.forEach((item) => {
+      item.classList.add("none");
+    });
+    showSort = true;
+  }
+  //* ------------------------ */
 
   function onFormSubmitHandler(e) {
     e.preventDefault();
@@ -219,16 +315,46 @@ const tasks = [
 
   function createNewTask(title, body) {
     const newTask = {
-      title,
-      body,
-      completed: false,
       _id: `task-${Math.random()}`,
+      completed: false,
+      body,
+      title,
     };
 
     objOfTasks[newTask._id] = newTask;
-
-    return { ...newTask };
+    return {
+      ...newTask,
+    };
   }
+
+  //* Кнопка выполнения задачи */
+  //* ------------------------ */
+
+  function onCompletedhandler({ target }) {
+    if (target.classList.contains("completed-btn")) {
+      const parent = target.closest("[data-task-id]");
+      const id = parent.dataset.taskId;
+
+      if (objOfTasks[id].completed === true) {
+        objOfTasks[id].completed = false;
+        if (parent.classList.contains("bg-success")) {
+          parent.classList.remove("bg-success");
+          parent.classList.add("bg-white");
+        }
+      } else {
+        objOfTasks[id].completed = true;
+        if (showSort) {
+          unfinishedTasks();
+        }
+        if (parent.classList.contains("bg-white")) {
+          parent.classList.remove("bg-white");
+          parent.classList.add("bg-success");
+        }
+      }
+    }
+  }
+
+  //* ------------------------ */
 
   function deleteTask(id) {
     const { title } = objOfTasks[id];
